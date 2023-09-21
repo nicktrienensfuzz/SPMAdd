@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public class GithubAPI {
     private let requester: Requester
     private let token: String
@@ -17,7 +16,7 @@ public class GithubAPI {
         self.token = token
     }
     
-    public func fetchReleases(repo: String) async throws -> [ReleaseElement] {
+    func fetchReleases(repo: String) async throws -> [ReleaseElement] {
         var extractedRepo = repo
         if repo.hasPrefix("https://github.com/") {
             extractedRepo = extractedRepo.replacingOccurrences(of: "https://github.com/", with: "")
@@ -27,7 +26,7 @@ public class GithubAPI {
             "Authorization": "Bearer \(token)",
             "X-GitHub-Api-Version": "2022-11-28"
         ]
-        
+        // "https://raw.githubusercontent.com/\(extractedRepo)/main/Package.swift"
         let request = Endpoint(method: .GET,
                                path: "https://api.github.com/repos/\(extractedRepo)/releases",
                                headers: headers)
@@ -50,7 +49,7 @@ public class GithubAPI {
         
     }
     
-    public func fetchContent(repo: String, filename: String) async throws -> FileResponse {
+    func fetchContent(repo: String, filename: String) async throws -> FileResponse {
         var extractedRepo = repo
         if repo.hasPrefix("https://github.com/") {
             extractedRepo = extractedRepo.replacingOccurrences(of: "https://github.com/", with: "")
@@ -68,8 +67,8 @@ public class GithubAPI {
         // print(request.cURLRepresentation())
         
         let data = try await requester.makeRequest(request)
-        // let response = String(data: data, encoding: .utf8)!
-        // print(response)
+        let response = String(data: data, encoding: .utf8)!
+        print(response)
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
